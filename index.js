@@ -156,15 +156,13 @@ class Instructor extends Lambdasian {
     this.catchPhrase = lambdaAttrs.catchPhrase;
   }
   // static functions cannot be inherited, are used as class utility functions
-  static calcGrade(oldGrade, totalAssignments) {
+  static calcGrade(oldGrade) {
     let newGrade = Math.floor(Math.random() * 201) - 100;
-    return (oldGrade * newGrade) / totalAssignments;
+    return oldGrade + newGrade;
   }
   applyGrade(student) {
-    student.grade = Instructor.calcGrade(
-      student.grade,
-      student.totalAssignments
-    );
+    student.grade = Instructor.calcGrade(student.grade);
+    return `${this.name} graded ${student.name}`;
   }
   demo(subject) {
     return `Today we are learning about ${subject}`;
@@ -195,14 +193,17 @@ class Student extends Lambdasian {
     this.previousBackground = lambdaAttrs.previousBackground;
     this.className = lambdaAttrs.className;
     this.favSubjects = lambdaAttrs.favSubjects;
-    this.grade = 100;
+    this.grade = 50;
+    this.endorsed = false;
   }
   graduate() {
     if (this.grade < 70) {
+      console.log(`Not yet...`);
       this.grade = Instructor.calcGrade(this.grade);
       return this.graduate();
     }
-
+    console.log(`Lambda endorsement for ${this.name}!`);
+    this.endorsed = true;
     return `Lambda endorses ${this.name}`;
   }
   listSubjects() {
@@ -252,7 +253,7 @@ that will randomly add or subtract points to a student's grade. _Math.random_ wi
 + This method, when called, will check the grade of the student and see if they're ready to graduate from Lambda School
 + If the student's grade is above a 70% let them graduate! Otherwise go back to grading their assignments to increase their score.
 */
-Object.setPrototypeOf(ProjectManager.prototype, Instructor);
+// Object.setPrototypeOf(ProjectManager.prototype, Instructor);
 
 const student1 = new Student({
   name: "Will",
@@ -263,7 +264,32 @@ const student1 = new Student({
   favSubjects: ["React Hooks", "Lambda Labs", "CS 1"],
 });
 
+const instructor1 = new Instructor({
+  name: "Freddy",
+  age: 37,
+  location: "Minneapolis",
+  specialty: "React, Solving Bug Mysteries",
+  favLanguage: "Java (Just kidding...it is Python)",
+  catchPhrase: `Alright, gang! Let's split up and google clues.`,
+});
+
+const pm1 = new Instructor({
+  name: "Velma",
+  age: 37,
+  location: "Minneapolis",
+  specialty: "CS fundamentals, Glasses, Solving Bug Mysteries",
+  favLanguage: "Java",
+  catchPhrase: `Jinkies`,
+  gradClassName: "WEB36",
+  favInstructor: `Scoo B. Dewey`,
+});
+
+student1.graduate();
+
 console.log(student1);
+console.log(instructor1);
+console.log(pm1);
+console.log(pm1.applyGrade(student1));
 
 ///////// END OF CHALLENGE /////////
 ///////// END OF CHALLENGE /////////
